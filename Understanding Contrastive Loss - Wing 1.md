@@ -7,5 +7,9 @@ SimCLR is one of the famous approaches using contrastive loss. It maps images to
 This idea is not new, this goes back to 1992 with the paper titled 'Self-organizing neural network that discovers syrfaces in random-dot stereograms' by Hinton and Becker. This is essentially SimCLR but without deep networks.</br>
 
 So, to set the goal clear - the objective is to learn an embedding that pulls positive pairs together and pushes negatives apart, where positive pairs are two views from the same image and negatives pairs are two views from different images. The numerator in the loss function is all about trying to increase the similarity of two positive views or a positive pair. The denominator is all about forcing two views of different images or negative pairs to map to different points in embedding space, i.e., they are to be pushed apart.</br>
-$$ L_{contrastive)(f, \tau, M) = E_{(x, x^+) ~ P_{pos} {x_i^-}_{i = 1...M ~ P_data} [-log(\frac{e^{f(x)^TF(x^+}/\tau}{e^{f(x)^TF(x^+}/\tau} + \sum_i^{e^{f(x)^TF(x^-}/\tau}})] $$
+
+
+
+
+L_{contrastive)(f, \tau, M) = E_{(x, x^+) ~ P_{pos} {x_i^-}_{i = 1...M ~ P_data} [-log(\frac{e^{f(x)^TF(x^+}/\tau}{e^{f(x)^TF(x^+}/\tau} + \sum_i^{e^{f(x)^TF(x^-}/\tau}})]
 
