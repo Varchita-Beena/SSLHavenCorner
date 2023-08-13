@@ -8,7 +8,11 @@ This idea is not new, this goes back to 1992 with the paper titled 'Self-organiz
 
 So, to set the goal clear - the objective is to learn an embedding that pulls positive pairs together and pushes negatives apart, where positive pairs are two views from the same image and negatives pairs are two views from different images. The numerator in the loss function is all about trying to increase the similarity of two positive views or a positive pair. The denominator is all about forcing two views of different images or negative pairs to map to different points in embedding space, i.e., they are to be pushed apart.</br>
 
-<img align="left" src="https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/UCL_W1_EQ1.png" alt="InfoNCE Loss">
+###### InfoNCE Loss
+![InfoNCE Loss](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/UCL_W1_EQ1.png)
+InfoNCE loss was introduced in the paper with title Contrastive Predictive Coding. 
+
+
 
 
 
