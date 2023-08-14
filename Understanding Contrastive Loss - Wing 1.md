@@ -2,6 +2,14 @@
 In recent years, pre-trained models that employ contrastive loss have shown impressive outcomes and have even attained leading positions in self-supervised representation learning. However, the precise workings and efficacy of this loss function are still being actively investigated. Various research endeavors are dedicated to exploring the theoretical, experimental, and geometrical dimensions of this loss, aiming to unveil its complexities.
 </br>
 ## Paper Title : [Tian et al., 2020](https://arxiv.org/abs/2005.10243) - What Makes for Good Views for Contrastive Learning?
+
+Understanding the importance of invariant features from a story 'Funes the Memorious' by Jorge Luis Borges.</br>
+InfoMax principle.</br>
+InfoMin principle.</br>
+Optimal views for contrastive representation learning are task-dependent.</br>
+Reverse U shaped relationship between an estimate of mutual information and representation quality.</br>
+Semi-supervised method to learn effective views for a given task.</br>
+
 SimCLR is one of the famous approaches using contrastive loss. It maps images to a lower dimensional space and that's our embedding vector or trained representations. We want representations such that two different crops of same image should be close as much as possible i.e. they should be attracted to each other and two crops from different images should be repel each other. So different parts of the same image get represented alike while of different images end up away from each other in the embedding space. Two different views can be crops (disjoint crops or one crop is subset of another crop), color channels, etc.</br>
 
 This idea is not new, this goes back to 1992 with the paper titled 'Self-organizing neural network that discovers syrfaces in random-dot stereograms' by Hinton and Becker. This is essentially SimCLR but without deep networks.</br>
@@ -28,6 +36,23 @@ This paper uses labeled data to learn better views but still perform contrastive
 Let's discuss some points on the equation described at the start for InfoNCE loss. We can say that the positive images come from a joint distribution over both views p(v1, v2) and the negative pairs from a product of marginal p(v1)p(v2). So the goal of the contrastive learning is get an estimator of the mutual information between v1 and v2 that discriminates between samples from the empirical joint distibution p(v1)p(v2|v1) and the samples from the product of marginals p(v1)p(v2).</br>
 
 Is it shown that the InfoNCE loss is the lower bound on the information shared between the raw views I(v1;v2). I(v1;v2) >= I(z1;z2) >= InfoNCE loss. z1 and z2 are the embeddings that we get by applying some model/operations on the raw data. The simple understanding for this inequality is through- recall data processing inequality. It says that when we apply some local physical operation on signal then the information content of a signal cannot be increased via a local physical operation. It's true here also as we are applying convolutions on images so the information won't increase after every operation. Hence, I(v1;v2) >= I(z1; z2) >= log(K) - InfoNCE loss. K is the number of negative samples. This says that, if we are to minimize the InfoNCE loss, then as a result we are maximizing the information content between the raw images and the more negative images we have, the more our model will work hard to find a good solution and hence InfoNCE is the lower bound. </br>
+
+Create views: Randomly crop two patches from the same image with various offsets. We are increasing the spatial distance between two patches. After contrastive training stage, evaluate in dataset by freezing the encoder and training a linear classifier. So the plot is mutual information vs accuracy. The result is reverse-U shaped. So the InfoNCE loss is reduced, hence we are increasing the mutual information and the downstream task accuracy first increases and then decreases. When we have the patch disatnce very high we are not getting very good accuracy as the captured shared information is very less. Even when we have the least spatial distance we are not able to get very fine accuracy as it captures a lot of shared information. There exists a sweet spot where we are able to capture right amount of shared information that is enough for downstream task. The plot is about the patch distances. Paper shows experiments for color space, color jittering, random resized crop. For all they are able to get reverse U shaped curve. </br>
+
+We can see the trade off between how much information our views share about the input and how well learned representations performs at predicting y for a task. When we are not able to achieve desired accuracy for downstream task it implies that we are missing on some task-relevant information and we are the needed information is being discarded by the view, degrading the performance.</br>
+
+When we are capturing a lot of information between the views we are landing in the excess noise zone as we are capturing information beyond need. We are gathering some noise or background, decreasing the transfer learning accuracy, hence the worse generalization. </br>
+
+Sweet spot is all about capturing right amount of information no noise, only relevant information for the downstream task.</br>
+
+We often do not have access to a fully labeled train set that specifies the downstream task in advance, and thus evaluating how much task-relevant information is contained in the views and representation at training time is challenging. The construction of views has typically guided by domain knowledge that alters the input while preserving the task-relevant variable. </br>
+
+Toy dataset - mixes three tasks. 
+Moving-MNIST: Videos where digits move inside a black canvas with constant speed and bounce off of image boundaries. 
+STL-10: A fixed background image
+Final dataset - Colorful Moving MNIST: it has three factors of variation in each frame: the class of the digit, the position of the digit and the class of the background 
+
+Unsupervised and semi-supervised methods that synthesize novel views following InfoMin principle. 
 
 
 
