@@ -12,8 +12,10 @@ Contrastive loss measures the similarity between positive pairs of samples while
 6.  Best views are downstream task-dependent</br>
 7.  Creating views</br>
 8.  Understanding Proposition</br>
+9.  Summary
+9.  References
 
-#### Introduction
+### Introduction
 SimCLR is one of the famous approaches using contrastive loss. It maps images to a lower dimensional space and that's our embedding vector or trained representations. We want representations such that two different crops of same image should be close as much as possible i.e. they should be attracted to each other and two crops from different images should be repel each other. So different parts of the same image get represented alike while of different images end up away from each other in the embedding space. Two different views can be crops (disjoint crops or one crop is subset of another crop), color channels, etc.</br>
 
 This idea is not new, this goes back to 1992 with the paper titled 'Self-organizing neural network that discovers surfaces in random-dot stereograms' by Hinton and Becker. This is essentially SimCLR but without deep networks.</br>
@@ -24,7 +26,7 @@ So, to set the goal clear - the objective is to learn an embedding that pulls po
 ![InfoNCE Loss](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/UCL_W1_EQ1.png)
 InfoNCE loss was introduced in the paper with title Contrastive Predictive Coding.</br>
 
-#### Funes the Memorious
+### Funes the Memorious
 Isn't the concept of memory, perception, and the intricacies of human consciousness fascinating? Jorge Luis Borges' short story "Funes the Memorious" delves into these ideas. It examines the consequences of possessing a flawless memory – whether it's a blessing or a burden. The character Funes acquires an extraordinary mental capacity, becoming "memorious." He recalls every detail of his life in vivid precision, even minute aspects like cloud formations on specific days. However, this overwhelming memory prevents him from grasping abstract concepts. He struggles with meaningful conversations, literature, and creative thinking. Funes' all-encompassing memory hinders his ability to form connections and extract meaning from his experiences..</br>
 
 Imagine encountering a piece of paper that feels unfamiliar, disconnected from your previous encounters with paper. In "Funes the Memorious," Funes becomes perturbed by the fact that a "dog at three fourteen (seen from the side) should have the same name as the dog at three fifteen (seen from the front)." This illustrates the potential danger of an excess of information. Our minds construct identity representations that discard unnecessary details. These view-invariant representations are crucial, especially in multiview coding research. For instance, after seeing a small piece of paper, our minds can seamlessly connect it to a larger one. As previously discussed, contrastive multiview learning involves aligning views of the same image and separating different views of distinct images. This demands remembering essential details while discarding irrelevant ones for abstract representation. The pivotal question is: "Which viewing conditions should remain invariant?" For tasks like classifying images based on the time of day, time invariance is impractical. Adopting Funes' approach of remembering every specific viewing angle would hinder our ability to track moving objects like dogs in videos or images.</br>
@@ -37,13 +39,13 @@ The paper's authors employ two strategies to address this:
 
 This paper uses labeled data to learn better views but still perform contrastive learning using only unlabeled data. Also, the results depend on architectures also but to make results comparable authors only change input views, keeping other settings same.</br>
 
-#### InfoNCE loss
+### InfoNCE loss
 Let's delve into the equation introduced at the beginning for the InfoNCE loss. We can deduce that the positive images originate from a combined distribution across both views, denoted as p(v1, v2), while the negative pairs stem from the product of individual distributions, p(v1)p(v2). Thus, the primary objective of contrastive learning is to develop an estimator for the mutual information between v1 and v2. This estimator is designed to differentiate between samples from the empirical joint distribution p(v1)p(v2|v1) and those from the product of marginal distributions p(v1)p(v2).</br>
 
 Is it shown that the InfoNCE loss is the lower bound on the information shared between the raw views I(v1;v2). This relationship can be understood through the inequality sequence: I(v1;v2) ≥ I(z1;z2) ≥ InfoNCE loss. Here, z1 and z2 are the embeddings derived from applying specific model operations on the raw data. The rationale for this inequality lies in the data processing inequality, which states that local physical operations on a signal cannot increase its information content. This concept holds true here too, as the application of convolutions on images doesn't result in increased information after each operation. Hence, we have I(v1;v2) ≥ I(z1; z2) ≥ log(K) - InfoNCE loss, with K representing the number of negative samples. This implies that by minimizing the InfoNCE loss, we simultaneously maximize the information content between the raw images. Moreover, a higher count of negative images compels the model to work harder to find an optimal solution, thereby making InfoNCE an effective lower bound.</br>
 
 
-#### InfoMin Principle
+### InfoMin Principle
 This was InfoNCE loss or InfoMax principle - suggests that in learning representations, the aim is to gather as much information as possible about the input. However, the authors introduce the InfoMin principle as its counterpart. They show that for effective performance in downstream tasks, the right set of views should share only the essential information. They argue that maximizing information is beneficial only when it's relevant to the task. Going beyond that, it's better to create representations that discard unnecessary details, which can improve overall performance and make tasks easier.
 
 More concretly authors have given some definitions: - 
@@ -58,8 +60,11 @@ A "minimal sufficient encoder" is a special type of sufficient encoder. Among al
 ###### Optimal Representation of a Task:
 This definition is related to using the learned representations for downstream tasks, such as classification or prediction. For a specific task (let's say, predicting a label y based on input data x), an "optimal representation" z* is the encoded form of x that's both minimal and sufficient regarding the task at hand. In other words, z* contains only the most essential information needed to make accurate predictions about y based on x.
 
-#### Information captured.
+### Information captured.
 Authors created different views by randomly cropping two patches from the same image, each with varying offsets. They increased the spatial gap between the patches. After contrastive training, they evaluated the dataset by freezing the encoder and training a linear classifier. The mutual information vs. accuracy plot took a reverse-U shape. The reduction in InfoNCE loss led to an increase in mutual information, initially boosting downstream task accuracy. However, accuracy eventually declined when the patch distance was extremely high, resulting in minimal shared information. Similarly, with the smallest spatial distance, high shared information didn't yield optimal accuracy. Instead, a "sweet spot" emerged where the right amount of shared information was captured for the downstream task. The plot revolved around patch distances, and the paper showcased experiments with color space, color jittering, and random resized crops. In all cases, they observed a reverse U-shaped curve, indicative of this intriguing phenomenon.</br>
+
+![Information captured](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/UCL_W1_info_regime.png)
+![Patch based plot](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/UCL_W1_patch_accuracy.png)
 
 ###### Missing information: 
 We need to find a balance between how much information our views contain about the input and how effectively the learned representations work for a task. If we can't achieve the desired accuracy for a task, it means we're missing important task-related information. It's possible that the views are throwing away needed information, leading to poor performance.</br>
@@ -73,7 +78,7 @@ The analysis shows that transfer performance will have a limit (upper bound) rep
 
 Authors also show that the InfoMin principle can be put into practice by using more powerful data changes to lower mutual information, getting closer to the sweet spot. This approach led to achieving top-level accuracy (SOTA) on benchmark datasets. InfoMin Augmentation involves methods like RandomResizedCrop, Color Jittering, Gaussian Blur, RandAugment, Color Dropping, and a JigSaw branch. InfoMin pre-training consistently outperformed supervised pre-training as well as other unsupervised pre-training methods.
 
-#### Best views are downstream task-dependent
+### Best views are downstream task-dependent
 Frequently, we lack a completely labeled training set that defines the downstream task beforehand. This makes it difficult to assess how much task-related information the views and representations contain during training. Constructing views usually involves using domain knowledge to modify the input while keeping the task-relevant factor intact.</br>
 
 The auhtors build a toy dataset combines three tasks: </br>
@@ -95,7 +100,7 @@ When only a single factor is shared between View-1 and View-2, the performance i
 
 In scenarios where multiple factors are shared, one factor can overpower another. For instance, sharing the background might lead to latent representations ignoring important information about discriminating or locating digits. This could happen because background information dominates, causing the encoder to choose it as a shortcut to solve the contrastive pre-training task. However, when digit and position are shared, the digit-related aspects take precedence.</br>
 
-#### Creating views
+### Creating views
 To experiment, the authors employ flow-based models to transform color spaces into new color spaces using InfoMin principle. These transformations create distinctive views by separating color channels. Contrastive learning and linear classifier evaluation are then performed on these views, all while preserving the properties of the color spaces during the transformation process. The experiments utilize pixel-wise operations and various types of flows, and the evaluation takes place on the STL-10 dataset.
 
 For the above purpose, authors use adversarial training. They use "generator" that changes how pictures look. They also use "encoders," to figure out if the changed pictures are different or similar. The generator tries to make the changed pictures look similar, while the encoders try to tell them apart. This way, the generator learns to make pictures that are different but still look similar. The goal is to find a good balance between changing the pictures and keeping them similar. This helps the generator create useful and meaningful changes in the pictures. They use a specific method to measure the success of this process, and they make sure that the generator doesn't come up with meaningless or weird changes.
@@ -119,7 +124,7 @@ To further analyze their approach, they compare different types of view generato
 
 They also compare the performance of their approach, with the raw input data using larger backbone networks. This comparison shows consistent improvement using the learned views over the raw input. This demonstrates the effectiveness of their method in enhancing the representation learning process.
 
-#### Understanding Proposition
+### Understanding Proposition
 It states that by using minimal sufficient encoders, we can find optimal views that minimize mutual information between them while preserving relevant information for a downstream task. This process ensures that the views are well-suited for the task at hand.</br>
 
 Given: Minimal sufficient encoders f1 and f2, and optimal views v1*, v2*.
@@ -127,6 +132,7 @@ Suppose we have minimal sufficient encoders, f1 and f2. For a downstream task T 
 The proof establishes that when certain conditions are met (minimality and sufficiency of encoders), the optimal views derived from the data in the context of a downstream task lead to optimal representations through contrastive learning. </br>
 The propositions and their proofs establish the relationships and properties of optimal views, minimal sufficient encoders, and optimal representations for downstream tasks in the context of self-supervised representation learning. </br>
 
+#### Part - 1
 The optimal views v1* and v2* for task T with label y are views such that:
 I(v1*; v2*) = I(v1*; y) = I(v2*; y) = I(x,y)
 
@@ -167,6 +173,7 @@ This shows that I(v1*, v2*) = I(x;y) and that the optimal views (v1*, v2*) minim
 Finally v1* and v2* are conditionally independent given y because I(v2*; v1*|y) = 0 and this means that once the label is known, optimal views are independent of each other. 
 This concludes the proof of Proposition 1, demonstrating that the optimal views for task T with label y have the desired mutual information relationships and conditional independence.
 
+#### Part - 2
 Given optimal views v1*, v2* and minimal sufficient encoders f1 and f2, the learned representations z1 or z2 are sufficient statistics of v1 or v2 for y, i.e., I(z1;y) = I(v1;y) or I(z2;y) = I(v2;y)
 
 ###### Step 1: Introduction and Goal:
@@ -201,6 +208,7 @@ Now that I(v1;v2∣z1)=0, it implies that I(y;v1∣z1)≤0. By nonnegativity, we
 
 In summary, this proves that the learned representations z1 and z2 capture all the information necessary from v1 and v2 for the label y, confirming them as sufficient statistics. The proof uses properties of mutual information, minimal sufficient encoders, and the relationship between optimal views and encoders.
 
+#### Part - 3
 The representations z2 are also minimal for predicting y.
 ###### Step 1: Introduction and Goal:
 The goal of this is to show that the learned representations z1 and z2 are not only sufficient statistics for predicting y, as shown in above, but they are also minimal sufficient statistics for predicting y.
@@ -234,4 +242,13 @@ A similar logical reasoning can be applied to show that z2 is also an optimal an
 
 In summary, this proves that the learned representations z1 and z2 are not only sufficient statistics but also minimal sufficient statistics for predicting y. This is demonstrated by analyzing their information content, leveraging properties of sufficient encoders, and proving their optimality.
 
+### Summary
+1. Established that for effective contrastive representation learning, good views should contain relevant task information and avoid unnecessary details – this is the InfoMin principle.
+2. Building on this, authors showed that the best views depend on the specific task, both theoretically and practically.
+3. Also introduce a semi-supervised method to learn suitable views for a given task.
+4. Analyzed recent data augmentation techniques using the InfoMin concept and proposed a fresh set of data augmentation methods. These methods achieved an impressive top-1 accuracy on the ImageNet linear readout benchmark using a ResNet-50 model.
 
+### References
+1. ["Representation Learning with Contrastive Predictive Coding" by Aaron van den Oord, Yazhe Li, and Oriol Vinyals](https://arxiv.org/abs/1807.03748)
+2. [Becker, Suzanna & Hinton, Geoffrey. (1992). Self-organizing neural network that discovers surfaces in random-dot stereograms. Nature. 355. 161-3. 10.1038/355161a0.](https://www.researchgate.net/publication/21425437_Self-organizing_neural_network_that_discovers_surfaces_in_random-dot_stereograms)
+3. [Funes the Memorious](https://vigeland.caltech.edu/ist4/lectures/funes%20borges.pdf)
