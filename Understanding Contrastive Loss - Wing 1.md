@@ -43,7 +43,7 @@ We can see the trade off between how much information our views share about the 
 
 When we are capturing a lot of information between the views we are landing in the excess noise zone as we are capturing information beyond need. We are gathering some noise or background, decreasing the transfer learning accuracy, hence the worse generalization. </br>
 
-Sweet spot is all about capturing right amount of information no noise, only relevant information for the downstream task.</br>
+Sweet spot is all about capturing right amount of information, no noise, only relevant information for the downstream task.</br>
 
 We often do not have access to a fully labeled train set that specifies the downstream task in advance, and thus evaluating how much task-relevant information is contained in the views and representation at training time is challenging. The construction of views has typically guided by domain knowledge that alters the input while preserving the task-relevant variable. </br>
 
@@ -51,8 +51,36 @@ Toy dataset - mixes three tasks.
 Moving-MNIST: Videos where digits move inside a black canvas with constant speed and bounce off of image boundaries. 
 STL-10: A fixed background image
 Final dataset - Colorful Moving MNIST: it has three factors of variation in each frame: the class of the digit, the position of the digit and the class of the background 
+View-1 : sequence of frames containing moving digit
+View-2 : (single image) The positive view is sharing some factor with sequence and negative doesn't share any factor. 
+3 downstream tasks are considered for an image: predict the digit class, localize the digit and classify the backhround image (10 classes from STL-10). Authors are freezing the backbone and training a linear task-specific head.
 
-Unsupervised and semi-supervised methods that synthesize novel views following InfoMin principle. 
+Single Factor Shared: The performance is significantly affected by what is shared between view-1 and view-2. when both only share background then contrastive learning can hardly learn representations that capture digit class and location. 
+
+Multiple Factors Shared: Experiments show that one factor can overwhelm another, when background is shared, latent representation leaves out infromation for discriminating or localizing digits. May be because the information bits of background predominates and the encoder chooses the background as shortcut to solve the contrastive pre-training task. When they share digit and position, the digit predominates.
+
+Authors use flow-based models to transform color spaces into novel color spaces. These transformations result in distinct views obtained by splitting color channels. These views are then subjected to contrastive learning and linear classifier evaluation, with a focus on maintaining the properties of color spaces during transformation. The experiments are conducted using pixel-wise operations and different types of flows, and the evaluation is performed on the STL-10 dataset.
+
+For the above purpose, authors use adversarial training. They use "generator" that changes how pictures look. They also use "encoders," that try to figure out if the changed pictures are different or similar. The generator tries to make the changed pictures look similar, while the encoders try to tell them apart. This way, the generator learns to make pictures that are different but still look similar. The goal is to find a good balance between changing the pictures and keeping them similar. This helps the generator create useful and meaningful changes in the pictures. They use a specific method to measure the success of this process, and they make sure that the generator doesn't come up with meaningless or weird changes.
+
+Experiments are done using different color representations like RGB and YDbDr. They notice the mutual information measure (INCE) and the accuracy of the tasks they're testing on follow a curve that looks like a reverse "U" shape. What's especially intriguing is that the YDbDr color representation is already close to the optimal point they are aiming for. This aligns with their belief that the way colors are separated into brightness and color information is a good strategy for capturing essential details while still making objects recognizable.
+
+They also mention another color decomposition method called Lab, which performs similarly well. They point out that this method was designed to mimic how humans perceive color, which suggests that human color perception might actually be quite effective for self-supervised learning. 
+
+However, they also note a challenge in their approach. The training process, which is similar to a type of machine learning called GAN, can be unstable. This means that different attempts with the same settings can lead to different results. They believe this instability might be because the view generator doesn't know anything about the final tasks they're testing on, so some constraints are not met perfectly.
+
+To address this challenge, they propose a new method that combines both unsupervised and semi-supervised learning to improve stability and performance.
+
+Semi-supervised view learning.
+A method that leverages the availability of a small number of labeled examples for the downstream task. They want to guide the view generator, represented by "g," to retain the information about the labels. To achieve this, they introduce two classifiers, denoted as c1 and c2, which help in performing classification during the process of learning views. The goal is to optimize an equation that involves these classifiers and the mutual information measure (INCE). 
+
+The INCE term applies to all data (both labeled and unlabeled), while the classifiers' terms are specific to the labeled data. In each iteration, they take both an unlabeled batch and a labeled batch and use the frozen view generator to create views for the unsupervised contrastive representation learning.
+
+They show that, regardless of the original color space and whether the generator operates with volume-preserving (VP) or non-volume-preserving (NVP) flows, the learned views tend to be centered around the optimal performance region, or the "sweet spot." This outcome highlights the importance of incorporating information about the labels.
+
+To further analyze their approach, they compare different types of view generators: "supervised," "unsupervised," and "semi-supervised" (a combination of supervised and unsupervised losses). They also include the baseline of using contrastive learning over the original color space, referred to as "raw views." The semi-supervised view generator significantly outperforms the strictly supervised one, which underscores the value of reducing mutual information between the learned views. 
+
+They also compare the performance of their approach, g(X), with the raw input data X (which is either RGB or YDbDr) using larger backbone networks. This comparison shows consistent improvement using the learned views over the raw input. This demonstrates the effectiveness of their method in enhancing the representation learning process.
 
 
 
