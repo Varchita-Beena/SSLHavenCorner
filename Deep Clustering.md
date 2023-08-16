@@ -218,6 +218,8 @@ The evaluation is conducted using the same downstream task that was employed in 
 
 Interestingly, the best performance is achieved when using a relatively high number of clusters, specifically k = 10,000. This result is intriguing because, based on the expectation that the model is trained on the ImageNet dataset, one might assume that a lower number of clusters, such as k = 1,000, would yield better outcomes. However, the experimentation shows that a certain level of over-segmentation, indicated by the higher number of clusters, is actually beneficial for improving the model's performance on the given task.
 
+![Preliminary studies](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/deep_clustering_graphs.png)
+
 ## Visualizations
 ###### First layer filters.
 The AlexNet was trained using the DeepCluster method on two types of input images: raw RGB images and images preprocessed with a Sobel filter. Convolutional neural networks learn features lower layers capturing simpler patterns and higher layers capturing more complex patterns. The first layer filters are responsible for detecting basic features like edges, corners, and color contrasts.
@@ -229,6 +231,8 @@ The left panel in the figure below shows the visual representation of the first 
 On the other hand, filters obtained with Sobel preprocessing, which is an edge-detection technique, are more focused on detecting edges and contours in the images (right panel in the figure below).
 
 Researchers point out that training convnets on raw RGB images might lead to filters that emphasize color information, which is not very effective for object classification. Preprocessing the images with techniques like Sobel filtering helps the convnets to learn more relevant features, like edges, which are crucial for accurate object recognition.
+
+![Filter Visualization](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/deep_clustering_filters.png)
 
 ###### Probing deeper layers.
 The study delves into the behavior of filters in deeper layers of a CNN, examining their ability to capture textures, patterns, and even object-related or stylistic information. The analysis provides insights into how different layers of the network contribute to recognizing and understanding visual features in images.
