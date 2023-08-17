@@ -1,7 +1,9 @@
 # Momentum Contrast for Unsupervised Visual Representation Learning
 ## Outline
 1. Introduction
-2. MoCo
+2. MoCo method
+3. Summary
+4. Breakdown of pseudocode
 
 ## Introduction
 Natural langugae processing: The data involves discrete elements like words or sib-word units that can be organized into tokeinzed dictionaries. This enables the application of unsupervised learning methods, where the goal is to learn meaningful representations from the data. These representations capture the relationships and meanings of the words or tokens within the language. 
@@ -105,17 +107,86 @@ However, there's a challenge – each round of the game might have its own speci
 
 So, this mechanism allows for a larger dictionary size by using multiple positions, but it comes with the challenge of needing specialized rules or tools, which might not easily translate to other tasks or scenarios.
 
-###### MoCo's Approach:
+MoCo's Approach:
 Now, let's say we have a recipe book and a kitchen, just like the previous cooking class, but this time we have a helper who can remember past recipes and help us mix and match. This helper is like the "momentum update" in MoCo. It's taking some ideas from the old recipes and blending them with the new ones, making sure the taste stays good. This way, we're not limited by the size of the kitchen or the need for special rules. We can try new things while keeping a touch of familiarity.
 
 The "momentum update," allows for a larger dictionary without complicated rules and special designs, while still keeping things consistent and familiar.
 
 ###### Comparison between the "memory bank approach" and the "MoCo" approach
+Analogy:
+Imagine we have a collection of books that represent different concepts. Each book contains valuable infromation and we want to build a dictionary of terms that are important in these books.
+
+Memory Bank Approach:
+We have a memory bank where we keep notes from each book. whenever we need to create a new dictionary, we randomly pick some notes from this memory bank. So we can have a large dictionary because the memory bank holds notes from many books. A challenge is that these notes were written at different times and some of them might be outdated or not fully aligned with each other.
+
+MoCo Approach:
+We decide to learn a dictionary by actively engaging with the books. We start reading a book (representating minibatch of data) and as we read, we take notes on key terms. These notes are consistent as they come from the same book we are cirrently reading. While we do this, we also keep a smaller set of the most recent and relevant notes (queue), so we don't forget the important terms we have learned. 
+
+Comparision and Relevance:
+The memory bank approach uses all the notes from the books (representations of all samples in the dataset), allowing a large dictionary size. However, these notes come from various times and might not be very consistent.
+
+The MoCo approach focuses on the current book (mini-batch) that we are reading. We actively create a smaller but more consistent set of notes. We also keep a limited number of recent notes to help us remember the most important terms. 
+
+Momemtum Update:
+Memory bank: a momentum update is applied to notes from the same book, helping to keep their information consistent. 
+MoCo: a momentum update is applied to the notes themselves (encoder parameters) to maintain consistency across different minibatches. 
+
+Efficiency and Scale:
+MoCo is more memory efficient and can handle larger datasets as it doesn't need to store every note (representation) in a memory bank. It focuses on the current learning process which can be more efficient for very large-scale data. 
+
+![Momentum Contrast](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/momentum_contrast_method.png)
+
+### Pretext Task
+This paper used the instance discrimination task as pretext task. 
+Positive Pairs: (query and key) consider two images as a positive pair if they are related to each other. For instance, they are different views of the same image or come from the same original image. These pairs help the system understand similarities between images.
+Negative Pairs: On the other hand, consider two images as a negative pair if they are not related or are from different images. These pairs help the system understand differences between images. The negative samples are from the queue. Encoder network say, CNN for encoding the images. 
+
+### Batch Normalization (BN)
+Batch Normalization is a technique to help stabilize and speed up the training process. It helps to make sure that the data that flows through the network during training is in a good range, which can make learning more efficient.
+
+Challenge with BN:
+However, in the case of this approach, using Batch Normalization presents a problem. The encoders have Batch Normalization, but it turns out that this can make the network learn in a way that's not beneficial. It seems like the network is finding a way to "cheat" the learning process by using Batch Normalization's communication between samples within a batch. This leaks information that the network can exploit to easily solve the task but without learning meaningful features.
+
+Solution: Shuffling BN:
+To fix this issue, "shuffling BN" is introduced. Here's how it works:
+1. Training with Multiple GPUs: During training, multiple Graphics Processing Units (GPUs) are used to speed up the process. Each GPU processes a part of the training data.
+2. Shuffling the Sample Order: For the key encoder, the order of the samples in the current mini-batch is shuffled before they are divided among the GPUs. This means that each GPU gets a mixed-up version of the mini-batch. After encoding, the sample order is shuffled back to its original order. However, for the query encoder, the sample order remains unchanged.
+3. Effect on Batch Normalization: By shuffling the order of samples for the key encoder, the statistics used by Batch Normalization for the query and its positive key come from different groups of samples. This prevents the network from exploiting the communication between samples in a batch and forces it to learn meaningful features.
+4. Benefit for Learning: This shuffling BN technique helps the training process to benefit from Batch Normalization without allowing the network to "cheat" by exploiting the sample communication.
 
 
+## Summary
+Researchers hypothesize that building dictionaries that are both large and consistent as they evolve during training is highly desirable for unsupervised learning in computer vision. The main goal of MoCo is to create dynamic dictionaries that can be used for unsupervised learning with a contrastive loss, which is a technique to learn meaningful features from data.
 
+1. Building Large Dictionaries: A larger dictionary can better capture the complex features present in high-dimensional visual data, like images. MoCo achieves this by using a queue to store encoded representations of data samples. This queue allows the dictionary size to be independent of the mini-batch size used for training.
+2. Maintaining Consistency: To ensure that the keys in the dictionary are consistent over time, MoCo introduces the concept of momentum. The key encoder, which creates the keys for the dictionary, is updated using a moving average of the query encoder. This ensures that the keys' representations stay similar even as the training progresses.
+3. Pretext Task: MoCo employs a simple pretext task known as instance discrimination. In this task, a query matches a key if they represent different views (like different crops) of the same image. This task is used to train MoCo's representation learning.
+4. They show that in 7 downstream tasks related to detection or segmentation, MoCo unsupervised pre-training can surpass its ImageNet super- vised counterpart, in some cases by nontrivial margins.
+5. In these experiments, we explore MoCo pre-trained on Ima- geNet or on a one-billion Instagram image set, demonstrating that MoCo can work well in a more real-world, billion image scale, and relatively uncurated scenario.
+6. These re- sults show that MoCo largely closes the gap between unsupervised and supervised representation learning in many computer vision tasks, and can serve as an alternative to ImageNet supervised pre-training in several applications.
+7. Limited Improvement with Larger Data: While MoCo shows consistent improvement when transitioning from ImageNet-1M (1 million images) to IG-1B (1 billion images) data, the extent of this improvement is relatively small. This suggests that the full potential of larger-scale data might not be fully harnessed by MoCo. The authors speculate that introducing more sophisticated pretext tasks could potentially lead to better utilization of such massive datasets.
+8. Advanced Pretext Tasks: MoCo currently uses a simple pretext task, instance discrimination. However, the authors suggest that exploring more complex pretext tasks, such as masked auto-encoding tasks, could enhance the learning capability of MoCo. These tasks could involve different domains, like language or vision, and still utilize the contrastive learning approach.
+9. Adapting to Different Pretext Tasks: The authors propose that MoCo's framework could be extended to various pretext tasks beyond instance discrimination. For example, tasks involving masked auto-encoding could be a natural fit. This would allow MoCo to be versatile and useful across different types of data and learning objectives.
 
+In summary, while MoCo has shown impressive results in unsupervised representation learning, there are opportunities to further enhance its performance by exploring advanced pretext tasks, adapting to different learning scenarios, and leveraging larger-scale datasets more effectively. These open questions highlight the ongoing efforts to refine and expand the capabilities of the MoCo method.
 
+## Breakdown of pseudocode
+1. f_q and f_k - two encoder networks, one for queries and one for keys. These networks encode data samples into feature vectors.
+2. queue - represents the dictionary as a queue of keys. It has K keys (size c(NxC)) - N is total number of samples in a mini-batch and C is the feature dimension.
+3. m - momentum coefficient used in the momentum update pf the key network.
+4. t - temperature
+5. The loop iterates over mini-batch x loaded from the dataset
+6. x_q and x_k are two randomly augmented versions of the same input mini-batch x.
+7. q and k are the encoded feature vectors obtained by passing x_q through the query encoder f_q and x_k through the key encoder f_k, respectively.
+8. The key feature vectors k are detached from the computation graph using k.detach(). This ensures that there is no gradient flow back through these vectors during the backward pass.
+9. Positive logits l_pos are calculated by computing the dot product between each query vector q and its corresponding key vector k.
+10. Negative logits l_neg are calculated by multiplying each query vector q with all keys in the queue using matrix multiplication. This forms a set of negative samples for contrastive learning.
+11. Logits for both positive and negative samples are concatenated to form logits
+12. A cross-entropy loss is calculated between the logits and labels. In this case, the positive samples are assigned the label 0, and the negative samples are assigned labels as 1.
+13. Backpropagation is performed to compute gradients with respect to the query network parameters f_q.params. This updates the query network using stochastic gradient descent (SGD).
+14. The key network parameters f_k.params are updated using a momentum-based approach. The updated parameters are a combination of the previous parameters and the current query network parameters.
+15. The current mini-batch of keys is enqueued into the dictionary queue.
+16. The earliest mini-batch of keys is dequeued from the dictionary to ensure that the queue maintains a fixed size.
 
 
 
