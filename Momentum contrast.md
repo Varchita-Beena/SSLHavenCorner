@@ -1,4 +1,4 @@
-# Momentum Contrast for Unsupervised Visual Representation Learning
+# [Momentum Contrast for Unsupervised Visual Representation Learning](https://arxiv.org/abs/1911.05722)
 ## Outline
 1. Introduction
 2. MoCo method
@@ -6,7 +6,7 @@
 4. Breakdown of pseudocode
 
 ## Introduction
-Natural langugae processing: The data involves discrete elements like words or sib-word units that can be organized into tokeinzed dictionaries. This enables the application of unsupervised learning methods, where the goal is to learn meaningful representations from the data. These representations capture the relationships and meanings of the words or tokens within the language. 
+Natural langugae processing: The data involves discrete elements like words or sub-word units that can be organized into tokeinzed dictionaries. This enables the application of unsupervised learning methods, where the goal is to learn meaningful representations from the data. These representations capture the relationships and meanings of the words or tokens within the language. 
 
 For computer vision the data is quite different, images are continuous and exist in a high-dimensional space, making it challenging to directly apply the same strategies used for language tasks. Images are not naturally structured in a way that's easily interpretable for human communication, unlike words in a language.
 
