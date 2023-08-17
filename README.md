@@ -7,3 +7,4 @@ Comprehensive coverage of self-supervised learning in both computer vision and n
 
 ### Self Supervised Learning (Images)
 1. [Deep Cluster for Unsuperervised Learning of Visual Features](https://github.com/Varchita-Beena/SSLHavenCorner/blob/main/Deep%20Clustering.md)
+2. [Momentum Contrast for Unsupervised Visual Representation Learning](https://github.com/Varchita-Beena/SSLHavenCorner/blob/main/Momentum%20contrast.md)
