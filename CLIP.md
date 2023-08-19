@@ -90,8 +90,10 @@ In the context of their training process, they use a softmax operation. The soft
 
 In their approach, instead of fixing this temperature parameter beforehand (which would add an additional hyper-parameter to their model), they decide to optimize it directly during the training process. To do this optimization, they use a "log-parameterized multiplicative scalar." This means they manipulate the temperature parameter in a logarithmic way, which helps in making the optimization process more stable and prevents the temperature from becoming an additional hyper-parameter that needs tuning. The temperature parameter (τ) is adjusted during training from epoch to epoch.
 
-Image encoder - They tried ResNet-50 with some modifications and Vision Transformer (ViT)
+Image encoder - They tried ResNet-50 with some modifications and Vision Transformer (ViT)</br>
 Text encoder - Transformer.
+
+![CLIP](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/clip_method.png)
 
 ## Few points
 Researchers studied zero-shot transfer as a way of measuring the task learning capabilities of machine learning systems. 
