@@ -4,6 +4,7 @@
 1. Introduction
 2. Distributing points on the unit hypersphere.
 3. Necessity of normalization.
+4. Feature Distribution on the Hypersphere
 
 
 ## Introduction
@@ -115,8 +116,24 @@ Another researcher carried out experiments that demonstrated the positive effect
 
 So, normalization is necessary to ensure stable and controlled behavior of mathematical operations like dot products and softmax functions when dealing with feature vectors. It prevents skewed distributions and promotes a balanced contribution of features to the computations. 
 
+## Feature Distribution on the Hypersphere
+Let's focus on the properties that a loss function should encourage when learning feature representations for positive and negative pairs of data. The context is a contrastive loss framework where the goal is to make the feature representations of similar (positive) pairs closer and those of dissimilar (negative) pairs farther apart.
 
+1. Alignment: refers to the idea that the feature representations of samples that form a positive pair (i.e., samples that should be similar) should be mapped to nearby points in the feature space. This alignment ensures that the model captures shared information between positive pairs while being relatively invariant to noise or irrelevant factors that might be present in the data. In other words, the feature space should emphasize the common characteristics of the positive pair samples.
 
+2. Uniformity: the distribution of feature vectors in the feature space. Ideally, the feature vectors should be spread out uniformly across the unit hypersphere. This uniform distribution preserves as much information from the original data as possible, avoiding any significant bias or concentration of feature vectors in specific regions. This property ensures that the feature space can represent a wide range of data variations.
+
+To verify the importance of these properties, the authors performed an empirical visualization using CIFAR-10 dataset representations on a two-dimensional unit hypersphere. They compared three different methods of obtaining these representations:
+
+1. Random Initialization: The representations are obtained using random initial values for the features.
+
+2. Supervised Predictive Learning: training an encoder and a linear classifier together from scratch using cross-entropy loss on labeled data.
+
+3. Unsupervised Contrastive Learning: an encoder is trained using the contrastive loss with specific hyperparameters (τ = 0.5 and M = 256), which encourages positive pairs to be similar and negative pairs to be dissimilar.
+
+By visualizing the representations obtained through these methods, the authors aimed to demonstrate whether the learned features exhibit alignment and uniformity properties. The key takeaway is that unsupervised contrastive learning, which explicitly encourages alignment and uniformity through its loss function, tends to produce representations that better adhere to these desired properties. This, in turn, suggests that these properties are indeed beneficial for learning effective feature representations.
+
+The informal argument or understanding is that in the contrastive loss, the numerator is always positive and bounded below, so the loss favours the smaller value i.e., having more aligned features. Now assume the encoder is perfectly aligned, i.e., P [f (x) = f (y)] = 1, then minimizing the loss is equivalent to maximizing pairwise distances with a LogSumExp (The inner term is then exponentiated and summed, and then the logarithm is taken) transformation. Intuitively, pushing all features away from each other should indeed cause them to be roughly uniformly distributed.
 
 
 
