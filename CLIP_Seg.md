@@ -2,6 +2,13 @@
 
 This paper introduces a novel system designed to generate image segmentations using various types of prompts during testing. These prompts can be either in the form of text or images. The system is trained to perform three distinct segmentation tasks, each with its own unique challenges. These tasks include referring expression segmentation, zero-shot segmentation, and one-shot segmentation.
 
+
+## Outline:
+1. Introduction
+2. Model
+
+## Introduction
+
 To achieve this, the authors utilize CLIP as the foundational model. CLIP is a pre-trained model that understands visual and textual information. They enhance CLIP by integrating a transformer-based decoder, which enables the model to make dense predictions for segmentation tasks. This decoder takes the information learned by CLIP and uses it to produce detailed segmentation maps.
 
 The model is trained using the PhraseCut dataset. This dataset contains binary segmentation maps associated with images, generated based on free-text prompts. This innovative approach allows the model to dynamically adapt not only to the specific segmentation tasks mentioned earlier but also to any binary segmentation task that can be formulated using either text or image queries. In essence, this system can generate accurate segmentations by interpreting prompts and producing segmentation maps accordingly.
@@ -32,7 +39,40 @@ In few-shot segmentation, the model might have seen a few examples from a new ca
 Both zero-shot and few-shot segmentation are challenging tasks because they require the model to apply its learned knowledge to new or underrepresented categories. It's a way of evaluating the model's ability to generalize its understanding beyond its initial training categories.
 
 
+## Model
 
+###### Decoder
+
+The decoder architecture for CLIPSeg is designed to generate image segmentations based on arbitrary prompts during test time. It employs a simple transformer-based decoder that has skip connections inspired by the U-Net architecture. These skip connections connect the decoder to the CLIP encoder, allowing the decoder to remain compact in terms of parameters.
+
+Here's how the decoder architecture works:
+
+1. Input Image and CLIP Visual Transformer: The query image is passed through the CLIP visual transformer, generating activations at different layers denoted as S. These activations represent different levels of abstraction and detail.
+
+2. Extracted Activations for Decoder: Activations from certain layers S of the CLIP visual transformer are extracted and projected to the token embedding size D, which is the size of the input tokens for the decoder. These extracted activations, including the CLS token, are then added to the internal activations of the decoder before each transformer block.
+
+3. Decoder Architecture: The decoder consists of multiple transformer blocks, where each block incorporates the extracted CLIP activations as well as its own internal activations. The decoder's last layer generates the binary segmentation by applying a linear projection on the tokens of the transformer.
+
+4. Conditional Modulation: To inform the decoder about the segmentation target, a conditional vector is used to modulate the decoder's input activation. This modulation is achieved using Feature-wise Linear Modulation (FiLM), a technique that adapts the feature statistics of the decoder based on the conditional vector. This conditional vector can be obtained in two ways: (1) by using the CLIP text-transformer embedding of a text query or (2) by using the CLIP visual transformer on a feature-engineered prompt image.
+
+5. Parameter Count and Image Sizes: The compactness of the decoder is emphasized, with only 1,122,305 trainable parameters for a specified token embedding size D=64. CLIP itself is not retrained but used as a feature extractor. To handle different image sizes, the positional embeddings are interpolated, allowing the model to work with varying input image dimensions.
+
+6. Layer Selection and Activation Extraction: CLIP activations are extracted from specific layers (S = [3, 7, 9]) to be used by the decoder. In this case, the decoder has three layers that correspond to the extracted CLIP activations.
+
+This architecture enables CLIPSeg to generate image segmentations based on various prompts, both in text and image form. The decoder's design leverages the informative features extracted by the CLIP encoder while maintaining a compact and efficient structure for segmentation tasks.
+
+###### Image-Text Interpolation
+In the CLIPSeg model, the information about what needs to be segmented (the segmentation target) is conveyed to the model through a conditional vector. This conditional vector guides the model's segmentation process by providing information about the desired outcome. This conditional vector can be obtained from either text or an image prompt.
+
+Since CLIP uses a common embedding space for both images and text captions, it becomes possible to combine information from both modalities. This is achieved by performing an interpolation between the embeddings of an image and a text sample in the shared embedding space. This interpolation creates a new conditional vector that captures characteristics from both the image and the text.
+
+Formally, let's denote si as the embedding of a support image and ti as the text embedding of a sample. The interpolated conditional vector xi is obtained by linearly combining the two embeddings based on a mixing coefficient a, where a is uniformly sampled from the range [0, 1]. The formula for interpolation is:
+
+xi = a * si + (1 - a) * ti
+
+By interpolating between the embeddings of an image and a text sample, the resulting conditional vector xi encapsulates a blend of characteristics from both sources. This interpolation method allows the model to learn from a combination of image and text information, enhancing its understanding of the segmentation task.
+
+During training, this interpolated conditional vector serves as a form of data augmentation. By introducing randomness through the sampling of the mixing coefficient a, the model becomes more robust and adaptable to variations in input conditions. This approach leverages the shared embedding space of CLIP to bridge the gap between image and text inputs, contributing to the model's flexibility and effectiveness in segmentation tasks.
 
 
 
