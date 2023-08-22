@@ -1,4 +1,4 @@
-# Paper: Image Segmentation Using Text and Image Prompts
+# Paper: [Image Segmentation Using Text and Image Prompts](https://arxiv.org/abs/2112.10003)
 
 This paper introduces a novel system designed to generate image segmentations using various types of prompts during testing. These prompts can be either in the form of text or images. The system is trained to perform three distinct segmentation tasks, each with its own unique challenges. These tasks include referring expression segmentation, zero-shot segmentation, and one-shot segmentation.
 
