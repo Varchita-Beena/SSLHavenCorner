@@ -124,8 +124,8 @@ The "projected representation" refers to the output of the projector that transf
 3. Effect of D >> K: When the original dimension (D) is significantly larger than the projected dimension (K), the performance improves. This aligns with the concept that a larger D relative to K creates an information bottleneck that mitigates the impact of the uniform prior bias.
 4. Effect of Decreasing K: For a given backbone dimension D, decreasing the projector dimension K leads to improved performance. This suggests that reducing the dimensionality of the projected representation (embedding) helps in mitigating the bias.
 5. Effect of Increasing D: For a given projector dimension K, increasing the backbone dimension D also results in higher gains in performance. This reinforces the idea that a larger original dimension helps in countering the uniform prior bias.
-6. Optimal Configuration: The figure demonstrates that the best performance is achieved when the original dimension D is very large and the projected dimension K is small. This indicates that a combination of a high-dimensional original representation and a low-dimensional projected representation is particularly effective in addressing the uniform prior bias and improving downstream task accuracy.
-![linear projector unbalanced sampling]()
+6. Optimal Configuration: The figure demonstrates that the best performance is achieved when the original dimension D is very large and the projected dimension K is small. This indicates that a combination of a high-dimensional original representation and a low-dimensional projected representation is particularly effective in addressing the uniform prior bias and improving downstream task accuracy.</br>
+![linear projector unbalanced sampling](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/linear_proj_unbalanced_sampling.png)
 
 ## Linear projector with balanced sampling
 1. In this phase of the experiment, the researchers transition to a balanced sampling scenario where images are uniformly sampled from the CIFAR10 dataset.
@@ -135,6 +135,7 @@ The "projected representation" refers to the output of the projector that transf
 5. Decreasing Projector Dimension: The results demonstrate that decreasing the size of the linear projector's dimension while maintaining a fixed backbone dimension can lead to improved accuracy on ImageNet.
 6. Efficiency Note: It's interesting to note that even with a relatively small number of dimensions (32) in the linear projector, a SimCLR model achieved a substantial 67.4% accuracy on the challenging ImageNet dataset.
 7. In summary, the experiment conducted in this phase focuses on balanced sampling scenarios and observes that while changing the projector's dimension has limited impact, varying the backbone's dimension still influences accuracy. Decreasing the size of the linear projector seems to be an effective strategy for improving accuracy on large-scale datasets like ImageNet.
+![Linear projector balanced sampling](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/linear_proj_balanced_sampling.png)
 
 ## Non-linear projector with unbalanced sampling
 1. Shift to Non-linear Projector and Unbalanced Sampling:
@@ -206,7 +207,7 @@ In this section, the researchers explored the relationship between the number of
 
 In summary, the researchers found that increasing the number of parameters doesn't always lead to improved performance in self-supervised learning, as certain ResNet architectures tailored for supervised training might not adapt well to SSL tasks. The study's findings emphasize the complexity of the relationship between model architecture, parameter count, and performance in different learning paradigms.
 
-![Number of parameters]()
+![Number of parameters](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/parameters.png)
 
 ## Wider SSL representations are sparse
 This section of the research investigates the impact of using wider representations in self-supervised learning (SSL) on the sparsity of learned representations. Sparsity refers to the proportion of zero activations in a representation. 
