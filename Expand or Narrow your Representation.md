@@ -1,4 +1,4 @@
-# Paper: A surprisingly simple technique to control the pretraining bias for better transfer: Expand or Narrow your representation
+# Paper: [A surprisingly simple technique to control the pretraining bias for better transfer: Expand or Narrow your representation](https://arxiv.org/abs/2304.05369)
 
 ## Outline
 1. Introduction
