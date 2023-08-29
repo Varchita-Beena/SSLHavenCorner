@@ -4,7 +4,7 @@ Comprehensive coverage of self-supervised learning in both computer vision and n
 ## Self-supervised learning
 1. [A surprisingly simple technique to control the pretraining bias for better transfer: Expand or Narrow your representation](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Expand%20or%20Narrow%20your%20Representation.md)
 
-## [Understanding Contrastive Loss
+## Understanding Contrastive Loss
 1. [What Makes for Good Views for Contrastive Learning?](https://github.com/Varchita-Beena/SSLHavenCorner/blob/main/Understanding%20Contrastive%20Loss%20-%20Wing%201.md)
 2. Understanding Contrastive Representation Learning through Alignment and Uniformity on the Hypersphere (Incoming)
 
