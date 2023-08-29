@@ -12,6 +12,6 @@ Comprehensive coverage of self-supervised learning in both computer vision and n
 1. [Deep Cluster for Unsuperervised Learning of Visual Features](https://github.com/Varchita-Beena/SSLHavenCorner/blob/main/Deep%20Clustering.md)
 2. [Momentum Contrast for Unsupervised Visual Representation Learning](https://github.com/Varchita-Beena/SSLHavenCorner/blob/main/Momentum%20contrast.md)
 
-## Mutil-Modal
+## Self Supervised Learning (Mutil-Modal)
 1. [Learning Transferable Visual Models From Natural Language Supervision](https://github.com/Varchita-Beena/SSLHavenCorner/blob/main/CLIP.md)
 2. [Image Segmentation Using Text and Image Prompts](https://github.com/Varchita-Beena/SSLHavenCorner/blob/main/CLIP_Seg.md)
