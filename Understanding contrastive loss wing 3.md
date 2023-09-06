@@ -4,6 +4,7 @@
 1. Introduction
 2. Evolution of self-supervised learning methods
 3. Hardness-aware property
+4. Gradient analysis
 
 
 ## Introduction
@@ -44,6 +45,31 @@ g(·) is another function that can be the same as f or come from a memory bank, 
 ![simple contrastive loss]()
 6. Hardness-Aware Loss: The softmax-based contrastive loss is described as a hardness-aware loss function. It has a property of automatically concentrating on separating more informative negative samples. This property helps in making the distribution of embeddings more uniform.
 7. Relation to Temperature: It's mentioned that L_simple is a special case of the softmax-based contrastive loss when the temperature parameter τ approaches infinity.
+
+## Gradient analysis
+1. Hardness-Aware Loss: The contrastive loss function, as defined earlier, has gradients with respect to negative samples that are proportional to the exponential term exp(si,j/τ), where si,j represents the similarity between the anchor sample xi and a negative sample xj (where j ≠ i). This observation indicates that the contrastive loss is a "hardness-aware" loss function. In simpler terms, it focuses on the difficulty or hardness of negative samples when updating the model's parameters.
+2. Magnitude Equality: One crucial finding is that the magnitude of the gradient with respect to the positive sample (si,i) is equal to the sum of the magnitudes of the gradients with respect to all negative samples (si,j where j ≠ i). In mathematical terms, the ratio of the gradient with respect to negative sample to the gradient with respect to the positive sample is 1. This means that the gradients are balanced between positive and negative samples.
+3. Temperature (τ): In the contrastive loss function, the temperature parameter (τ) acts as a knob that we can adjust. It determines how the model treats the similarities between samples. When τ is smaller, like 0.1 for example, it means we're setting the temperature to a low value.
+4. Nearest Neighbors and Hard Negatives: Imagine we have an anchor sample (xi), and we want to compare it to other samples in your dataset. These other samples can be thought of as neighbors in a feature space. Some of these neighbors are very similar to the anchor (positive samples), and some are quite different (negative samples).
+5. Role of Temperature (Small τ): When we set τ to a small value, like 0.1, it means that the loss function becomes very sensitive to even tiny differences in similarity. In other words, the model pays a lot of attention to making sure it can distinguish between samples that are extremely close to each other.
+6. Hard Negatives: "Hard negatives" are negative samples that are very challenging to tell apart from the anchor. These are the samples that are extremely close to the anchor in terms of similarity. When τ is small, the loss function is designed to focus on these hard negatives. It's like saying, "Let's make sure we can tell even the most similar samples apart."
+7. Importance: This behavior is useful because hard negatives are the ones that can really help improve the model's ability to discriminate between samples. If the model can distinguish between samples that are almost identical, it will likely perform even better when faced with more dissimilar samples.
+8. Probabilistic Interpretation: The observation that the magnitude of the gradient with respect to negative samples is proportional to the exponential term exp(si,j/τ) allows for a probabilistic interpretation. It means that the contrastive loss can be seen as defining a probabilistic distribution over the negative samples. The temperature τ controls the "spread" or "concentration" of this distribution. Smaller τ values lead to a more concentrated distribution, focusing on a smaller subset of hard negative samples, while larger τ values make the distribution more uniform.
+9. Positive Gradients vs. Negative Gradients: In the context of the contrastive loss, positive gradients encourage the model to make the similarity between the anchor and positive samples as high as possible. In contrast, negative gradients encourage the model to make the similarity between the anchor and negative samples as low as possible.
+10. Magnitude of Gradients: When we compute the magnitude of these gradients, we observe that the magnitude of the positive gradient is equal to the sum of the magnitudes of the negative gradients. This means that the influence of the negative samples, collectively, on the model's learning is balanced by the influence of the positive sample.
+11. Probabilistic Interpretation: Now, consider this in a probabilistic context. We can think of the positive gradient as representing the probability that the anchor sample is similar to the positive sample. Conversely, we can think of the sum of the negative gradients as representing the combined probability that the anchor sample is similar to all the negative samples.
+12. Balancing Probabilities: In a sense, we're balancing these probabilities. The model is being trained to increase the probability of being similar to the positive sample (positive gradient) while decreasing the probability of being similar to all the negative samples (sum of negative gradients).
+13. Temperature's Role: The temperature parameter (τ) controls how these probabilities are distributed. When τ is small, it places greater emphasis on fine-grained probabilities, meaning the model cares a lot about distinguishing even very similar samples. When τ is large, it smoothens the distribution, and the model becomes less sensitive to these fine-grained probabilities.
+
+
+
+
+
+
+
+
+
+
 
 
 
