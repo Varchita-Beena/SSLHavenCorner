@@ -209,8 +209,8 @@ In summary, Theorem 1 provides insights into the behavior of contrastive learnin
 4. vMF-KDE Connection: The equation in question relates the second term of the contrastive loss (Lcontrastive) to entropy estimation using vMF-KDE. Specifically, it computes the expectation (average) of the logarithm of the von Mises-Fisher kernel density estimator.
 5. The second term of Lcontrastive is concerned with how similar data points are in terms of their feature representations, f(x), under the contrastive learning framework. It looks at how close or far apart these representations are.
 6. In summary, this connection helps us understand that the contrastive loss is not only about encouraging the model to make similar data points closer in feature space (alignment) but also about encouraging the feature representations to be uniformly distributed on the hypersphere (uniformity). It quantifies this uniformity by estimating the entropy of the feature distribution using vMF-KDE. This insight is crucial for understanding why and how contrastive learning can learn useful representations for various downstream tasks.
-![wing2_equation2](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/wing2_equation3.png)
-![wing2_equation3](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/wing2_equation2.png)
+![wing2_equation2](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/wing2_equation2.png)
+![wing2_equation3](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/wing2_equation3.png)
 
 ###### Relation with the InfoMax principle
 1. The InfoMax principle is a concept in self-supervised learning, where the goal is to maximize the mutual information between pairs of samples (x, y) drawn from a positive distribution ppos. The mutual information measures the amount of information that knowing one sample (x) provides about another sample (y).
