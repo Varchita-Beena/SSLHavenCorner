@@ -190,8 +190,9 @@ This theorem deals with the behavior of the contrastive loss function as the num
 2. Perfect Uniformity: The second term, is related to uniformity. It involves the expectation of a log expression and is minimized if perfectly uniform encoders exist. Perfectly uniform encoders ensure that the feature representations of data points follow a uniform distribution on a hypersphere.
 3. Convergence: As the number of negative samples (M) increases, the contrastive loss converges to this limit. The convergence behavior is quantified by the statement that the absolute deviation from this limit decreases with a rate of O(M^{-1/2}
 4. Convergence to a Limit: The theorem tells us that as M, the number of negative samples, gets larger and larger (approaching infinity), the contrastive loss (Lcontrastive) starts to behave in a specific way, which is described in the theorem.
-5. Absolute Deviation: The "absolute deviation" refers to how much the contrastive loss differs from this specific behavior as we change the value of M. In other words, it measures how far off the actual loss is from the predicted behavior described in the theorem.
-6. Rate of Decrease: The statement says that this absolute deviation decreases at a specific rate, which is represented as O(M^{-1/2}). This is a mathematical notation used to describe how fast something decreases as a function of M. In this case, it tells us that as M gets larger, the difference between the actual loss and the predicted behavior decreases, and it does so at a rate where the difference is proportional to the square root of M. It quantifies how fast the loss converges to its limiting behavior as M becomes very large.
+5. When the number of negative samples M is very large, the minimum of seconf expression is attained when a pairwise distances between data representations are maximal (dot product at the exponent is as close to 0 as possible). So alignment and uniformity appears to be natural properties of good data representations.
+6. Absolute Deviation: The "absolute deviation" refers to how much the contrastive loss differs from this specific behavior as we change the value of M. In other words, it measures how far off the actual loss is from the predicted behavior described in the theorem.
+7. Rate of Decrease: The statement says that this absolute deviation decreases at a specific rate, which is represented as O(M^{-1/2}). This is a mathematical notation used to describe how fast something decreases as a function of M. In this case, it tells us that as M gets larger, the difference between the actual loss and the predicted behavior decreases, and it does so at a rate where the difference is proportional to the square root of M. It quantifies how fast the loss converges to its limiting behavior as M becomes very large.
 
 ![wing2 equation 1](https://github.com/Varchita-Beena/SSLHavenCorner/blob/SSLIncoming/Images/wing2_equation_1.png)
 
@@ -219,6 +220,23 @@ In summary, Theorem 1 provides insights into the behavior of contrastive learnin
 4. Paper's results instead analyze the properties of Lcontrastive itself. Considering the identity I(f(x); f(y)) = H(f(x)) − H(f(x) | f(y)), we can see that while uniformity indeed favors large H(f(x)), alignment is stronger than merely desiring small H(f(x) | f(y)). In particular, both Theorem 1 and the above connection with maximizing an entropy estimator provide alternative interpretations and motivations that Lcontrastive optimizes for aligned and information-preserving encoders.
 5. The paper's findings suggest that alignment is a stronger requirement than simply desiring small conditional entropy H(f(x) | f(y)). In contrast, uniformity favors having large entropy H(f(x)), but alignment ensures that similar samples are close in feature space.
 6. In summary, the InfoMax principle initially suggested that self-supervised learning should maximize mutual information between data point representations. However, the paper's findings reveal that Lcontrastive, a widely used loss function in self-supervised learning, optimizes for aligned and information-preserving encoders, which may have better practical implications for representation learning. This alternative perspective helps explain the success of Lcontrastive in various applications.
+
+## Summary
+1. The theorem says that the contrastive loss is the sum of 2 terms for several negative samples M approaching to infinity.
+2. Explanation is quite related to information theory actually a little stronger.
+3. CL results in maximizing the mutual information between the embeddings of two views of the same image that corresponds to minimizing the conditional entropy between the two views and maximizing the unconditional entropy of the views.
+4. Uniformity maps to a maximum entropy distribution.
+5. Alignment is stronger than just minimizing the conditional entropy because it could minimize conditional entropy by just making f(x) perfectly predictable from f(y) via a very complicated function.
+6. Alignment says that no it can't be a complicated function, we actually have to have a nice geometry in the embedding space where f(x) and f(y) are not just sharing the information but they are actually the same vector. So this is the strong condition that is imposed by the information theoretic argument.
+7. Lcontrastive optimizes for aligned and information preserving encoders.
+8. Experiments with this loss function achieve best performance at transfer to classification/depth prediction task
+9. On langauge dataset also the authors got same story (word2vec uses contrastive loss).
+10. So this paper gives two properties - alignment and uniform distribution
+11. Alignment is mesaured uisng euclidean distance and Uniformity is measured using RBF kernel.
+12. Paper proves that uniform feature distribution on the unit hypersphere minimizes the RBF based loss function.
+13. This paper imposes the unit norm constraint on learned data features known for its ability to increase the training stability of contrastive learning methods (due to extensive usauge of dot products). However theer is no rigrous proof of why the unit hypersphere constitutes a useful feature space property.
+14. Both uniformity and alignment losses ar eless computationally expensive than the vanilla contrastive loss due to the absence of the softmax operation.
+15. Transformer generated embeddings suffer from a condition called low uniformity - the embedding vectors tend to concentrate in a narrow cone of the embedding space which leads to unwanted results (spurious similarities between unrelated words).
 
 
 
