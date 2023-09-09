@@ -7,6 +7,7 @@
 4. Feature Distribution on the Hypersphere
 5. Quantifying Alignment and Uniformity
 6. Limiting Behavior of Contrastive Learning
+7. Summary
 
 
 ## Introduction
