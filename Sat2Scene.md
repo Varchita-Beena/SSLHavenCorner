@@ -1,6 +1,6 @@
 ## The Sat2Scene paper outlines a three-part process for generating 3D urban scenes from satellite images using a 3D diffusion model.
 > Texture Generation at the Point Level:
->> The first step involves generating texture colors for a given geometry at the point level using a 3D diffusion model. This model operates directly in 3D space, applying textures to the point cloud, which represents the geometry of the scene. The diffusion model helps in generating detailed and realistic textures for the points in the cloud.
+>> The first step involves generating texture colors for a given geometry at the point level using a 3D diffusion model. This model operates directly in 3D space, applying textures to the point cloud, which represents the geometry of the scene. The diffusion model helps in generating detailed and realistic textures for the points in the cloud. 
 
 > Transformation into Scene Representation:
 >> In the second step, the point cloud with the generated textures is transformed into a more structured scene representation. This process is carried out in a feed-forward manner, meaning that the model processes the point cloud data through a series of layers to produce a cohesive scene representation. This step is crucial for organizing the textured points into a format that can be effectively used in rendering.
@@ -102,15 +102,23 @@ The mask m is specifally used in he first generation phase of the sat2scene mode
 > How model and m collborate
 >>Higher m are areas where the data is considered reliable and accurate, example points on a clear, flat building facade with consistent geometry and texture might have high confidence.
 
->> If model predicts the color accurately in these high-confidence areas, that's  good, and model is rewared by lower loss. If the model makes a mistake in these areas, that's considered a signifiant error, and the model is penalized more heavily by higher loss to encourage it to correct this mistake.
+>> If model predicts the scene accurately in these high-confidence areas, that's  good, and model is rewarded by lower loss. If the model makes a mistake in these areas, that's considered a signifiant error, and the model is penalized more heavily by higher loss to encourage it to correct this mistake.
 
 >> Lower m are the areas where the data is less reliable or more uncertain, say points near the edges, etc.
 
->> If mode predicts the color accurately in these low-confidence areas, that's stil good, but it's not as critical, so the model is not as hevaily rewarded. If the model males a mistake in these low-confidence areas, it's not penalized as much because these areas are already considered less reliable. The model is encouraged to correct the error but with less urgency.
+>> If mode predicts the scene accurately in these low-confidence areas, that's stil good, but it's not as critical, so the model is not as hevaily rewarded. If the model males a mistake in these low-confidence areas, it's not penalized as much because these areas are already considered less reliable. The model is encouraged to correct the error but with less urgency.
 
 > Summary
 >> High m: The model should pay close attention and strive to get these areas correct because they are reliable.
 
 >> Low m: The model should try to get these right but erros are less critical.
->> 
- 
+
+
+## Datasets used in the paper:
+> HoliCity Dataset:
+>> It is a large scale 3D dataset for urban scene, particualry in central London. The 3D point clouds in this datasets are typically obtained by lifting 2D pixel information from high-resolution satellite or aerial imagery into 3D space, using methods like stero matching, photogrammetry or using height maps.
+> OmniCity Dataset:
+>> This focuses on urban environments and includes satellite images along with corresponding 3D point clouds.
+
+## Point Clouds
+
