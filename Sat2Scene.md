@@ -113,12 +113,47 @@ The mask m is specifally used in he first generation phase of the sat2scene mode
 
 >> Low m: The model should try to get these right but erros are less critical.
 
+## Background generation
+The process involves generating a panoramic sky image using a 2D diffusion model.
+> The input the sky generation process is typically a latent variable or an initially generated image of the sky, which is iteratively refined. This latent variable can be a random noise image, which is then progressively denoised and refined into a realistic sky image. Unlike the foreground, which is based on a 3D point cloud, the sky is represented as a 2D panoramic image.
+
+> The model uses a SOTA 2D diffusion model designed for imaegs synthesis. This model operates by iteratively refining the image, removing noise at each step, and generating details that match the learned patterns from the training data. The output is a 2D panoramic image of the sky, representating the background of the scene. 
 
 ## Datasets used in the paper:
+The 3D point clouds in datasets are typically obtained by lifting 2D pixel information from high-resolution satellite or aerial imagery into 3D space, using methods like stero matching, photogrammetry or using height maps.
 > HoliCity Dataset:
->> It is a large scale 3D dataset for urban scene, particualry in central London. The 3D point clouds in this datasets are typically obtained by lifting 2D pixel information from high-resolution satellite or aerial imagery into 3D space, using methods like stero matching, photogrammetry or using height maps.
+>> It is a large scale 3D dataset for urban scene, particualry in central London. 
 > OmniCity Dataset:
 >> This focuses on urban environments and includes satellite images along with corresponding 3D point clouds.
 
-## Point Clouds
+## Transformation into Scene Representation
+> Input:
+>> The input to this step is the textured point cloud generated in the previous phase. This point cloud has both geometric coordinates (x,y,z) and the RGB color values assigned during the texture generation process.
+
+>> Additionally, the sky background generated as a panoramic image is also part of the input, which is integrated into the final scene representation.
+
+> Scene Representation:
+>> The transformation into a scene representation is designed to convert the sparse, unstructured data of the point cloud into a more structured and usuable form. This structured scene representation is essential for efficient rendering and manipulation of the scene.
+
+>> The scene representation typically involves encoding the spatial and color information into a format that allows easy rendering from any viewpoint.
+
+> Feature Extraction
+>> A 3D encoder network is applied to the textured point cloud to extract features that represent geometric and appearance characteristics of the scene. This network processes the 3D data and creates a compact representation that captures the essential details needed for rendering.
+
+>> The output of the encoder is a set of latent features that encapsulate the spatial structure and textures of the scene. These features are then used in the rendering stage to generate images from different viewpoints.
+
+## Rendering
+The process of generating a 2D image or a serie of images from a 3D model or scene representation. Rendering takes the data that represents the 3D scene—including geometry, textures, lighting, and other properties—and converts it into a visual format that can be viewed on a screen.
+
+> Rasterization:
+>> Converts 3D objects into 2D pixels. It’s fast and commonly used in real-time applications like video games.
+
+> Ray Tracing:
+>> Simulates the way light interacts with objects to produce highly realistic images. It’s more computationally intensive but provides greater visual fidelity.
+
+> Physically-Based Rendering (PBR):
+>> Aims to simulate light in a way that mimics real-world physics, providing realistic shading and materials.
+
+
+
 
