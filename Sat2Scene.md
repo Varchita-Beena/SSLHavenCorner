@@ -1,0 +1,16 @@
+## Generation Phase in the Sat2Scene
+The generation phase is the first key step in the Sat2Scene model, where the goal is to generate initial textures for the 3D point cloud. This step involves using a 3D sparse diffusion model to create a per-point color map, effectively texturing the 3D geometry of the scene.
+
+>Point cloud dimensions are Nx3, denoted by P. N is number of points in the point cloud. each point has 3 dimensions corresponding to it coordinates in a 3D space (x, y, z). So, the shape of the input point cloud is Nx3 (geometry without color).
+> The output is a textured cloud with dimension Nx3, where each point has an RGB color associated with it, representing the texture. 
+> During training, a noise vector ϵ is added to the color map, which the model will learn to denoise. The noise simulates various conditions and helps the model generalize. The output is a per point color map C in normalized RGB space, where C belongs to [0, 1] and has dimensions Nx3, N is number of points in the point cloud. Each point in the cloud is now associated with a color, adding texture to the scene.
+> The color map C is initially corrupted by adding Gaussian noise, creating a noisy version Ct at each timestep t during the diffusion process.
+> The model uses a diffusion process, where it progressively removes noise from the noise from the noisy color map over multiple timesteps, gradually refining it to produce the final, denoised color map.
+> The diffusion model operates using 3D sparse convolutions, which are applied only to the non-empty regions of the point cloud, such as building surfaces and roads, making the process computationally efficient.
+> The core step is the denoising network D, which takes the noisy point cloud (P, Ct) and time step t as inputs and predicts the noise that should be removed.
+> Loss function: The primary goal during training at minimize the difference between the predicted noise D(P, Ct, t) and the actual noise added to the color map. The MSE is used as loss function. The norm used here is Frobenius norm, and the expectation is taken over the color map C, noise and timestep t. The loss often computed with a mask m that indicates the confidence of each point in the point cloud. This mask helps focus the loss calculation on points with high confidence, reducing the impact of noisy or uncertain points.
+> The model is trained over a series of diffusion steps, where at each step, it refines the noisy color map closer to the clean, target color map.
+> After training, the model can take a point cloud and generate a corresponding color map with realistic textures, representing the urban scene in 3D space.
+> The 3D sparse diffusion model gradually denoises the point cloud's color map. Starting from a noisy version of the color mao, the model predicts and removes the noise step by step until a clean, textured point cloud is obtained.
+> By focusing only on the occupied regions of the point cloud, sparse convolutions make the process efficient, allowing the model to handle large-scale 3D scenes without excessive computational overhead.
+> The training process revolves around minimizing the error between the predicted and the actual noise in th ecolor map, effectively teaching the model how to generate realistic textures from noisy data.
