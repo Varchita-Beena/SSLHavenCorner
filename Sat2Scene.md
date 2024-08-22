@@ -41,7 +41,7 @@
 ## Generation Phase in the Sat2Scene
 The generation phase is the first key step in the Sat2Scene model, where the goal is to generate initial textures for the 3D point cloud. This step involves using a 3D sparse diffusion model to create a per-point color map, effectively texturing the 3D geometry of the scene.
 
->Point cloud dimensions are Nx3, denoted by P. N is number of points in the point cloud. each point has 3 dimensions corresponding to it coordinates in a 3D space (x, y, z). So, the shape of the input point cloud is Nx3 (geometry without color).
+>Point cloud dimensions are Nx3, denoted by P. N is number of points in the point cloud. each point has 3 dimensions corresponding to it coordinates in a 3D space (x, y, z). So, the shape of the input point cloud is Nx3.
 
 > The output is a textured cloud with dimension Nx3, where each point has an RGB color associated with it, representing the texture.
 
@@ -97,4 +97,20 @@ The mask m is specifally used in he first generation phase of the sat2scene mode
 
 >>The mask m assigns confidence values to points based on their proximity to original data. Points that are very close to their original positions in the point cloud might receive a confidence value close to 1 (say, m = 0.9), while points that have been adjusted or newly introduced might have lower confidence values (say, m = 0.3).
 
->>  
+>> The confidence mask m is a way to tell the model how much it should trust the data at eacg point in the point cloud during the training process. The mask helps the model focus on the more reliable parts of the data while being less influenced by the less reliable parts.
+
+> How model and m collborate
+>>Higher m are areas where the data is considered reliable and accurate, example points on a clear, flat building facade with consistent geometry and texture might have high confidence.
+
+>> If model predicts the color accurately in these high-confidence areas, that's  good, and model is rewared by lower loss. If the model makes a mistake in these areas, that's considered a signifiant error, and the model is penalized more heavily by higher loss to encourage it to correct this mistake.
+
+>> Lower m are the areas where the data is less reliable or more uncertain, say points near the edges, etc.
+
+>> If mode predicts the color accurately in these low-confidence areas, that's stil good, but it's not as critical, so the model is not as hevaily rewarded. If the model males a mistake in these low-confidence areas, it's not penalized as much because these areas are already considered less reliable. The model is encouraged to correct the error but with less urgency.
+
+> Summary
+>> High m: The model should pay close attention and strive to get these areas correct because they are reliable.
+
+>> Low m: The model should try to get these right but erros are less critical.
+>> 
+ 
