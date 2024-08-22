@@ -1,8 +1,8 @@
 ## Generation Phase in the Sat2Scene
 The generation phase is the first key step in the Sat2Scene model, where the goal is to generate initial textures for the 3D point cloud. This step involves using a 3D sparse diffusion model to create a per-point color map, effectively texturing the 3D geometry of the scene.
 
->Point cloud dimensions are Nx3, denoted by P. N is number of points in the point cloud. each point has 3 dimensions corresponding to it coordinates in a 3D space (x, y, z). So, the shape of the input point cloud is Nx3 (geometry without color).
-> The output is a textured cloud with dimension Nx3, where each point has an RGB color associated with it, representing the texture. 
+>Point cloud dimensions are Nx3, denoted by P. N is number of points in the point cloud. each point has 3 dimensions corresponding to it coordinates in a 3D space (x, y, z). So, the shape of the input point cloud is Nx3 (geometry without color). <br>
+> The output is a textured cloud with dimension Nx3, where each point has an RGB color associated with it, representing the texture. <br>
 > During training, a noise vector ϵ is added to the color map, which the model will learn to denoise. The noise simulates various conditions and helps the model generalize. The output is a per point color map C in normalized RGB space, where C belongs to [0, 1] and has dimensions Nx3, N is number of points in the point cloud. Each point in the cloud is now associated with a color, adding texture to the scene.
 > The color map C is initially corrupted by adding Gaussian noise, creating a noisy version Ct at each timestep t during the diffusion process.
 > The model uses a diffusion process, where it progressively removes noise from the noise from the noisy color map over multiple timesteps, gradually refining it to produce the final, denoised color map.
