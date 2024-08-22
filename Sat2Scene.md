@@ -66,3 +66,35 @@ The generation phase is the first key step in the Sat2Scene model, where the goa
 > By focusing only on the occupied regions of the point cloud, sparse convolutions make the process efficient, allowing the model to handle large-scale 3D scenes without excessive computational overhead.
 
 > The training process revolves around minimizing the error between the predicted and the actual noise in th ecolor map, effectively teaching the model how to generate realistic textures from noisy data.
+
+## Mask m in the loss function
+The mask m is specifally used in he first generation phase of the sat2scene model, where the goal is to generatetextures (colors) for the 3D point cloud. The mask is employed to weight the loss function during training of the 3D diffusion model, ensuring that the model focuses more on the reliable points in the point cloud and less on the noisy or uncertain ones.
+
+> Say, we have a point cloud representing a small urban scene with N = 10,000 points. Each point has an (x,y,z) coordinate. Point A = (1,2,5), point B = (1, 10, 5), etc.
+
+> During training, we generate a mask m that assigns a confidence value to each point based on factors like point density, geometric consistency, and proximity to reliable data.
+>> Points on well-defined surfaces of the building receive high confidence (m = 0.9), while points in noisy or less certain areas (like the edges or where the data is sparse) receive lower confidence (say, m = 0.3)
+
+> Derivation of the Mask m
+>> In the Sat2Scene paper, the confidence values that form the mask m are derived based on a method that involves resampling the point cloud to achieve uniformity and using a noise-aware approach. This mask is used to focus the learning process on more reliable and relevant parts of the data.
+
+> Point cloud resampling
+>> Uniform distribution: The point cloud is resampled to ensure a uniform distribution of points. This step is crucial because the initial point cloud might have varying densities, with some areas densely populated with points and others more sparse.
+
+>> The paper uses Poison disk sampling to achieve this uniformity. This method ensures that points are evenly spread out across the scene, avoiding areas of excessive clustering or sparsity.
+
+>> Resampling can address issues like: overly dense regions - some areas might have too many points, leading to redundancy and unnecessary computational cost. Sparse regions - other areas might have too few points, which can result in poor representation of that part of the scene. The resampling pricess typically aims to maintian the overall number of points, but redistributes them evenly across 3D space.
+
+>> After resampling, th epoint cloud should have points that are more evenly spaced across the surface of the scene. This uniform distribution helps the model better represent the geometry and textures of the scene during the diffusion and rendering processes.
+
+>> Before Resampling: We start with a point cloud of N = 10,000 points. Some areas might have a high density of points (e.g., clustered near windows or edges), while others might be sparse (e.g., large flat wall areas).  
+
+>> During resampling, new points may be introduced to fillin sparse areas, or some original points might be moved slightly to achieve a more uniform distribution.
+
+>>Points that remoan close to their original positions (or are original points themselves) are generally considered more reliable because they directly represent the original data. These poinst have high confidence.
+
+>> Points that are further away from the otiginal positions, especially those that have been added or significantly moved during resampling, may have lower confidence. This is because the more a point's position is adjusted, the less certain we are about its exact representation of the original scene.
+
+>>The mask m assigns confidence values to points based on their proximity to original data. Points that are very close to their original positions in the point cloud might receive a confidence value close to 1 (say, m = 0.9), while points that have been adjusted or newly introduced might have lower confidence values (say, m = 0.3).
+
+>>  
